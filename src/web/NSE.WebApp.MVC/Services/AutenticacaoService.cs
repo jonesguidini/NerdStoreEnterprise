@@ -1,51 +1,58 @@
-﻿using System.Net.Http;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using System;
 using NSE.WebApp.MVC.Models;
+using System.Net.Http;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
+using NSE.WebApp.MVC.Extensions;
 
 namespace NSE.WebApp.MVC.Services
 {
-    public class AutenticacaoService : IAutenticacaoService
+    public class AutenticacaoService : Service, IAutenticacaoService
     {
         private readonly HttpClient _httpClient;
+        private readonly AppSettings _settings;
 
-        public AutenticacaoService(HttpClient httpClient)
+        public AutenticacaoService(HttpClient httpClient, 
+                                   IOptions<AppSettings> settings)
         {
+
+            httpClient.BaseAddress = new Uri(settings.Value.AutenticacaoUrl); // define a base URL da aplicação modo global
+
             _httpClient = httpClient;
         }
 
         public async Task<UsuarioRespostaLogin> Login(UsuarioLogin usuarioLogin)
         {
-            var loginContent = new StringContent(
-                JsonSerializer.Serialize(usuarioLogin), // a partir do .net core  3.0 utiliza esse recurso em vez do Json Soft
-                Encoding.UTF8,
-                "application/json"
-                );
+            var loginContent = ObterConteudo(usuarioLogin);
 
-            var response = await _httpClient.PostAsync("https://localhost:44382/api/identidade/autenticar", loginContent);
+            var response = await _httpClient.PostAsync("/api/identidade/autenticar", loginContent);
 
-            var options = new JsonSerializerOptions
+            if (!TratarErrosResponse(response))
             {
-                PropertyNameCaseInsensitive = true
-            };
+                return new UsuarioRespostaLogin
+                {
+                    ResponseResult = await DeserializarObjetoResponse<ResponseResult>(response)
+                };
+            }
 
-            return JsonSerializer.Deserialize<UsuarioRespostaLogin>(await response.Content.ReadAsStringAsync(), options);
+            return await DeserializarObjetoResponse<UsuarioRespostaLogin>(response);
         }
 
         public async Task<UsuarioRespostaLogin> Registro(UsuarioRegistro usuarioRegistro)
         {
-            var registroContent = new StringContent(
-                JsonSerializer.Serialize(usuarioRegistro), // a partir do .net core  3.0 utiliza esse recurso em vez do Json Soft
-                Encoding.UTF8,
-                "application/json"
-            );
+            var registroContent = ObterConteudo(usuarioRegistro);
 
-            var response = await _httpClient.PostAsync("https://localhost:44382/api/identidade/nova-conta", registroContent);
+            var response = await _httpClient.PostAsync("/api/identidade/nova-conta", registroContent);
 
-            return JsonSerializer.Deserialize<UsuarioRespostaLogin>(await response.Content.ReadAsStringAsync());
+            if (!TratarErrosResponse(response))
+            {
+                return new UsuarioRespostaLogin
+                {
+                    ResponseResult = await DeserializarObjetoResponse<ResponseResult>(response)
+                };
+            }
+
+            return await DeserializarObjetoResponse<UsuarioRespostaLogin>(response);
         }
     }
 }
