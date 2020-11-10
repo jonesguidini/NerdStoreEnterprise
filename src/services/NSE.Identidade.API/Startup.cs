@@ -13,6 +13,7 @@ namespace NSE.Identidade.API
 
         public Startup(IHostEnvironment hostEnvironment)
         {
+            // configuração do appsettings.json conforme o ambiente que rodará o app
             var builder = new ConfigurationBuilder()
                 .SetBasePath(hostEnvironment.ContentRootPath)
                 .AddJsonFile("appsettings.json", true, true)
