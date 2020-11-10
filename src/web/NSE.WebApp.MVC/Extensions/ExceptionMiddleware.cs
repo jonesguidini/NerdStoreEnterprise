@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Polly.CircuitBreaker;
 using Refit;
 
 namespace NSE.WebApp.MVC.Extensions
@@ -32,6 +33,10 @@ namespace NSE.WebApp.MVC.Extensions
             {
                 HandleRequestExceptionAsync(httpContext, ex.StatusCode);
             }
+            catch (BrokenCircuitException)
+            {
+                HandleCircuitBreakerExcepetionAsync(httpContext);
+            }
 
         }
 
@@ -46,6 +51,11 @@ namespace NSE.WebApp.MVC.Extensions
             }
 
             context.Response.StatusCode = (int)statusCode;
+        }
+
+        private static void HandleCircuitBreakerExcepetionAsync(HttpContext context)
+        {
+            context.Response.Redirect("/sistema-indisponivel");
         }
     }
 }
