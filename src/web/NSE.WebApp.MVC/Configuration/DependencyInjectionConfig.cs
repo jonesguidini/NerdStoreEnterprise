@@ -25,12 +25,12 @@ namespace NSE.WebApp.MVC.Configuration
 
             // HttpClientFactory  usando a classe concreta 'CatalogoService'
             services.AddHttpClient<ICatalogoService, CatalogoService>()
-                .AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>()
+                .AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>();
                 //.AddTransientHttpErrorPolicy( // usando 'polly'
                 // p => p.WaitAndRetryAsync(3, _ => TimeSpan.FromMilliseconds(600)));
-                .AddPolicyHandler(PollyExtensions.EsperarTentar())
-                .AddTransientHttpErrorPolicy(
-                    p => p.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
+                //.AddPolicyHandler(PollyExtensions.EsperarTentar())
+                //.AddTransientHttpErrorPolicy(
+                    //p => p.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
 
             // HttpClientFactory usando o RFIT (não precisa da classe concreta)
             //services.AddHttpClient("Refit", options =>

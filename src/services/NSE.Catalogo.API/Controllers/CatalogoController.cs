@@ -32,7 +32,7 @@ namespace NSE.Catalogo.API.Controllers
         [HttpGet("catalogo/produtos/{id}")]
         public async Task<Produto> ProdutoDetalhe(Guid id)
         {
-            throw new Exception("Erro!");
+            //throw new Exception("Erro!"); // usando para testar o circuit breaker
             return await _produtoRepository.ObterPorId(id);
         }
     }
