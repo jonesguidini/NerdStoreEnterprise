@@ -1,20 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using FluentValidation.Results;
+using MediatR;
+using NSE.Clientes.API.Models;
+using NSE.Core.Messages;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace NSE.Clientes.API.Application.Commands
 {
-    public class ClienteCommandHandler
+    public class ClienteCommandHandler : CommandHandler, IRequestHandler<RegistrarClienteCommand, ValidationResult>
     {
-        public void Manipular(RegistrarClienteCommand message)
+        private readonly IClienteRepository _clienteRepository;
+
+        public ClienteCommandHandler(IClienteRepository clienteRepository)
         {
-            // validar CMD
-
-            // persistir na base
-
-            
+            _clienteRepository = clienteRepository;
         }
 
+        public async Task<ValidationResult> Handle(RegistrarClienteCommand message, CancellationToken cancellationToken)
+        {
+            if (!message.EhValido()) return message.ValidationResult;
+
+            var cliente = new Cliente(message.Id, message.Nome, message.Email, message.Cpf);
+
+            var clienteExistente = await _clienteRepository.ObterPorCpf(cliente.Cpf.Numero);
+
+            // já existe um cliente com o cpf informado (exemplo)
+            if (clienteExistente != null) 
+            {
+                AdicionarErro("Este CPF já está em uso");
+                return ValidationResult;
+            }
+
+            _clienteRepository.Adicionar(cliente);
+
+            return await PersistirDados(_clienteRepository.UnitOfWork);
+        }
     }
 }

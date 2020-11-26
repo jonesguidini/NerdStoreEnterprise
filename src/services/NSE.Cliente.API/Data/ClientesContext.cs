@@ -10,7 +10,7 @@ namespace NSE.Clientes.API.Data
     {
         public ClientesContext(DbContextOptions<ClientesContext> options) : base(options)
         {
-            // melhorar a performance
+            // melhorar a performance = AsNoTracking()
             ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
             ChangeTracker.AutoDetectChangesEnabled = false;
         }
