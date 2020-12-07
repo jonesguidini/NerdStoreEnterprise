@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.DataAnnotations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NSE.WebApp.MVC.Extensions;
@@ -16,6 +17,9 @@ namespace NSE.WebApp.MVC.Configuration
     {
         public static void RegisterServices(this IServiceCollection services, IConfiguration configuration)
         {
+            // adicionado validação para cpfValidação provider
+            services.AddSingleton<IValidationAttributeAdapterProvider, CpfValidationAttibuteAdapterProvider>();
+
             // adiciona o HttpCliente q atualiza o login conforme as claims do usuário (HttpClientFactory)
             // e adiciona essa msma referencia na service q vai utilizada com o método 'AddHttpMessageHandler'
             // por exemplo no add de 'ICatalogoService'a abaixo

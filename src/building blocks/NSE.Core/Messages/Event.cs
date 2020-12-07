@@ -1,10 +1,17 @@
-﻿using System;
+﻿using MediatR;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace NSE.Core.Messages
 {
-    public class Event : Message
+    public class Event : Message, INotification
     {
+        public DateTime TimeStamp { get; private set; }
+
+        public Event()
+        {
+            TimeStamp = DateTime.Now;
+        }
     }
 }

@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using NSE.Catalogo.API.Models;
 using System.Linq;
 using NSE.Core.Data;
+using System.ComponentModel.DataAnnotations;
+using NSE.Core.Messages;
 
 namespace NSE.Catalogo.API.Data
 {
@@ -15,6 +17,9 @@ namespace NSE.Catalogo.API.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Ignore<ValidationResult>();
+            modelBuilder.Ignore<Event>();
+
             // esse recurso mapeia as strings caso não mapeado
             foreach (var property in modelBuilder.Model.GetEntityTypes().SelectMany(
                 e => e.GetProperties().Where(p => p.ClrType == typeof(string))))

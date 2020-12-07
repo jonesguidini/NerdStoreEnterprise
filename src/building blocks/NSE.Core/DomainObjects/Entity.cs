@@ -1,4 +1,6 @@
-﻿using System;
+﻿using NSE.Core.Messages;
+using System;
+using System.Collections.Generic;
 
 namespace NSE.Core.DomainObjects
 {
@@ -6,6 +8,34 @@ namespace NSE.Core.DomainObjects
     {
         public Guid Id { get; set; }
 
+        public Entity()
+        {
+            Id = Guid.NewGuid();
+        }
+
+        #region Tratamento Eventos
+
+        private List<Event> _notificacoes;
+        public IReadOnlyCollection<Event> Notificacoes => _notificacoes?.AsReadOnly();
+
+        public void AdicionarEvento(Event evento)
+        {
+            _notificacoes = _notificacoes ?? new List<Event>();
+            _notificacoes.Add(evento);
+        }
+
+        public void RemoverEvewnto(Event eventItem)
+        {
+            _notificacoes?.Remove(eventItem);
+        }
+
+        public void LimparEventos()
+        {
+            _notificacoes?.Clear();
+        }
+        #endregion
+
+        #region Comparações
         public override bool Equals(object obj)
         {
             var compareTo = obj as Entity;
@@ -37,6 +67,7 @@ namespace NSE.Core.DomainObjects
             return (GetType().GetHashCode() * 907) + Id.GetHashCode();
             // '907' é apenas um número aleatório para atualizaro hascode
         }
+        #endregion
 
         public override string ToString()
         {
