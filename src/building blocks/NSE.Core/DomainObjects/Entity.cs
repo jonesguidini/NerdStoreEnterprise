@@ -24,7 +24,7 @@ namespace NSE.Core.DomainObjects
             _notificacoes.Add(evento);
         }
 
-        public void RemoverEvewnto(Event eventItem)
+        public void RemoverEvento(Event eventItem)
         {
             _notificacoes?.Remove(eventItem);
         }

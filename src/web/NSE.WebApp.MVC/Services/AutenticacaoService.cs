@@ -10,7 +10,6 @@ namespace NSE.WebApp.MVC.Services
     public class AutenticacaoService : Service, IAutenticacaoService
     {
         private readonly HttpClient _httpClient;
-        private readonly AppSettings _settings;
 
         public AutenticacaoService(HttpClient httpClient, 
                                    IOptions<AppSettings> settings)

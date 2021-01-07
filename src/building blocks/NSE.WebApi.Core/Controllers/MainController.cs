@@ -31,8 +31,7 @@ namespace NSE.WebAPI.Core.Controllers
         /// <returns></returns>
         protected ActionResult CustomResponse(ModelStateDictionary modelState)
         {
-            var erros = modelState.Values.SelectMany(e => e.Errors);
-            foreach (var erro in erros)
+            foreach (var erro in modelState.Values.SelectMany(e => e.Errors))
             {
                 AdicionarErroProcessamento(erro.ErrorMessage);
             }
