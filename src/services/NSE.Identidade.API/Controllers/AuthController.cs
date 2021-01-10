@@ -28,13 +28,11 @@ namespace NSE.Identidade.API.Controllers
 
         public AuthController(SignInManager<IdentityUser> signInManager,
                               UserManager<IdentityUser> userManager,
-                              IOptions<AppSettings> appSettings,
-                              IBus bus)
+                              IOptions<AppSettings> appSettings)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _appSettings = appSettings.Value;
-            _bus = bus;
         }
 
         [HttpPost("nova-conta")]
@@ -56,6 +54,7 @@ namespace NSE.Identidade.API.Controllers
 
                 // Salva evento no RabbitMQ
                 var sucesso = await RegistrarCliente(usuarioRegistro);
+
 
                 return CustomResponse(await GerarJwt(usuarioRegistro.Email));
             }
@@ -85,9 +84,9 @@ namespace NSE.Identidade.API.Controllers
                 usuarioRegistro.Cpf
                 );
 
-            _bus = RabbitHutch.CreateBus("host:localhost:5672");
+            _bus = RabbitHutch.CreateBus("host=localhost:5672");
 
-            var sucesso = await _bus.Rpc.RequestAsync<UsuarioRegistradoIntegrationEvent, ResponseMessage>(usuarioRegistrado);
+            var sucesso = await _bus.RequestAsync<UsuarioRegistradoIntegrationEvent, ResponseMessage>(usuarioRegistrado);
 
             return sucesso;
 

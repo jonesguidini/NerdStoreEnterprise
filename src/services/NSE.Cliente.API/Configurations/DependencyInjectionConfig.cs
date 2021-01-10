@@ -8,6 +8,7 @@ using NSE.Clientes.API.Data;
 using NSE.Clientes.API.Data.Repository;
 //using NSE.Clientes.API.Data.Repository;
 using NSE.Clientes.API.Models;
+using NSE.Clientes.API.Services;
 using NSE.Core.Mediator;
 
 namespace NSE.Clientes.API.Configuration
@@ -26,11 +27,14 @@ namespace NSE.Clientes.API.Configuration
             // EVENTS
             services.AddScoped<INotificationHandler<ClienteRegistradoEvent>, ClienteEventHandler>();
 
-
             // REPOSITORIES
             services.AddScoped<IClienteRepository, ClienteRepository>();
-            
+
+            // CONTEXTO
             services.AddScoped<ClientesContext>();
+
+            // HOSTED INTEGRATION HANDLER
+            services.AddHostedService<RegistroClienteIntegrationHandler>(); //singleton
         }
     }
 }
